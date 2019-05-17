@@ -1,5 +1,6 @@
 const path = require('path'); //doesn't support ES6 modules yet
 const TerserPlugin = require('terser-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
     entry: './src/index.js', //Webpack entry point, usually imports all other dependencies
@@ -23,13 +24,13 @@ module.exports = {
             {
                 test: /\.css$/,
                 use: [
-                    'style-loader', 'css-loader'
+                    MiniCssExtractPlugin.loader, 'css-loader'
                 ]
             },
             {
                 test: /\.scss$/,
                 use: [
-                    'style-loader', 'css-loader', 'sass-loader' //IMPORTANT: ⬅︎ loaders load from right to left
+                    MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader' //IMPORTANT: ⬅︎ loaders load from right to left
                 ]
             },
             {
@@ -46,7 +47,11 @@ module.exports = {
         ]
     },
     plugins: [
-        new TerserPlugin() //minifies bundle.js
+        //new UglifyJsPlugin(),
+        new TerserPlugin(), //minifies bundle.js
         //** TerserPlugin is now recommended over uglify.js!!!
+        new MiniCssExtractPlugin({
+            filename: 'styles.css' //extracts dynamic CSS in JS and compiles to new css file
+        })
     ]
 }
