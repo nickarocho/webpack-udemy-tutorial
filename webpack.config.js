@@ -30,6 +30,17 @@ module.exports = {
                 use: [
                     'style-loader', 'css-loader', 'sass-loader' //IMPORTANT: ⬅︎ loaders load from right to left
                 ]
+            },
+            {
+                test: /\.js$/,
+                exclude: /node_modules/,
+                use: {
+                    loader: 'babel-loader', //
+                    options: {
+                        presets: [ '@babel/env' ], //helps compile ES6 to ES5
+                        plugins: [ 'transform-class-properties' ] //needs full list of plugins of ES6 features you want to convert
+                    }
+                }
             }
         ]
     }
