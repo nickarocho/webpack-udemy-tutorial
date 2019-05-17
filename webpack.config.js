@@ -18,6 +18,12 @@ module.exports = {
                     //as an MD5 hash of the file contents w/ the original extension
                     //** NEED to install via 'npm install file-loader --save-dev'
                 ]
+            },
+            {
+                test: /\.css$/,
+                use: [
+                    'style-loader', 'css-loader'
+                ]
             }
         ]
     }
