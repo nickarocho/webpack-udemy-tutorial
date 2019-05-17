@@ -1,11 +1,13 @@
 const path = require('path'); //doesn't support ES6 modules yet
 const TerserPlugin = require('terser-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const CleanWebpackPlugin = require ('clean-webpack-plugin');
 
 module.exports = {
     entry: './src/index.js', //Webpack entry point, usually imports all other dependencies
     output: { //specify the name of the file which will be generated as result of WP build
-        filename: 'bundle.js', //what's the file called?
+        filename: 'bundle.[contenthash].js', //what's the file called?
+        //[contenthash] is used as a cache-busting technique by adding MD5 hash to filename on code change
         path: path.resolve(__dirname, './dist'), //where will the file live? (auto-created by WP)
         //WP needs 'path' as a helper to avoid this error: "configuration.output.path: The provided value "./dist" is not an absolute path!-> The output directory as **absolute path** (required)."
         publicPath: 'dist/' //this tells the browser where to start the path for things like img src
@@ -51,7 +53,8 @@ module.exports = {
         new TerserPlugin(), //minifies bundle.js
         //** TerserPlugin is now recommended over uglify.js!!!
         new MiniCssExtractPlugin({
-            filename: 'styles.css' //extracts dynamic CSS in JS and compiles to new css file
-        })
+            filename: 'styles.[contenthash].css' //extracts dynamic CSS in JS and compiles to new css file
+        }),
+        new CleanWebpackPlugin()
     ]
 }
