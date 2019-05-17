@@ -2,6 +2,7 @@ const path = require('path'); //doesn't support ES6 modules yet
 const TerserPlugin = require('terser-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CleanWebpackPlugin = require ('clean-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
     entry: './src/index.js', //Webpack entry point, usually imports all other dependencies
@@ -10,7 +11,7 @@ module.exports = {
         //[contenthash] is used as a cache-busting technique by adding MD5 hash to filename on code change
         path: path.resolve(__dirname, './dist'), //where will the file live? (auto-created by WP)
         //WP needs 'path' as a helper to avoid this error: "configuration.output.path: The provided value "./dist" is not an absolute path!-> The output directory as **absolute path** (required)."
-        publicPath: 'dist/' //this tells the browser where to start the path for things like img src
+        publicPath: '' //this tells the browser where to start the path for things like img src
     },
     mode: 'none', //mandatory option
     module: { //teaching WP how to import different file types (knows JS "by heart", but not other types)
@@ -55,6 +56,7 @@ module.exports = {
         new MiniCssExtractPlugin({
             filename: 'styles.[contenthash].css' //extracts dynamic CSS in JS and compiles to new css file
         }),
-        new CleanWebpackPlugin()
+        new CleanWebpackPlugin(),
+        new HtmlWebpackPlugin // auto genereates HTML with dynamic paths/hashes
     ]
 }
