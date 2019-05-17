@@ -1,19 +1,17 @@
 const path = require('path'); //doesn't support ES6 modules yet
-const TerserPlugin = require('terser-webpack-plugin');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CleanWebpackPlugin = require ('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
     entry: './src/index.js', //Webpack entry point, usually imports all other dependencies
     output: { //specify the name of the file which will be generated as result of WP build
-        filename: 'bundle.[contenthash].js', //what's the file called?
+        filename: 'bundle.js', //what's the file called?
         //[contenthash] is used as a cache-busting technique by adding MD5 hash to filename on code change
         path: path.resolve(__dirname, './dist'), //where will the file live? (auto-created by WP)
         //WP needs 'path' as a helper to avoid this error: "configuration.output.path: The provided value "./dist" is not an absolute path!-> The output directory as **absolute path** (required)."
         publicPath: './../' //this tells the browser where to start the path for things like img src
     },
-    mode: 'none', //mandatory option
+    mode: 'development', //mandatory option, can be: 'none', 'development', or 'production'
     module: { //teaching WP how to import different file types (knows JS "by heart", but not other types)
         rules: [
             {
@@ -27,13 +25,13 @@ module.exports = {
             {
                 test: /\.css$/,
                 use: [
-                    MiniCssExtractPlugin.loader, 'css-loader'
+                    'style-loader'
                 ]
             },
             {
                 test: /\.scss$/,
                 use: [
-                    MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader' //IMPORTANT: ⬅︎ loaders load from right to left
+                    'style-loader', 'css-loader', 'sass-loader' //IMPORTANT: ⬅︎ loaders load from right to left
                 ]
             },
             {
@@ -56,12 +54,6 @@ module.exports = {
         ]
     },
     plugins: [
-        //new UglifyJsPlugin(),
-        new TerserPlugin(), //minifies bundle.js
-        //** TerserPlugin is now recommended over uglify.js!!!
-        new MiniCssExtractPlugin({
-            filename: 'styles.[contenthash].css' //extracts dynamic CSS in JS and compiles to new css file
-        }),
         new CleanWebpackPlugin(),
         new HtmlWebpackPlugin({ // auto genereates HTML with dynamic paths/hashes
             title: 'Hello world',
