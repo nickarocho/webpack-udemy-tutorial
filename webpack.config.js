@@ -1,4 +1,5 @@
 const path = require('path'); //doesn't support ES6 modules yet
+const TerserPlugin = require('terser-webpack-plugin');
 
 module.exports = {
     entry: './src/index.js', //Webpack entry point, usually imports all other dependencies
@@ -35,7 +36,7 @@ module.exports = {
                 test: /\.js$/,
                 exclude: /node_modules/,
                 use: {
-                    loader: 'babel-loader', //
+                    loader: 'babel-loader',
                     options: {
                         presets: [ '@babel/env' ], //helps compile ES6 to ES5
                         plugins: [ 'transform-class-properties' ] //needs full list of plugins of ES6 features you want to convert
@@ -43,5 +44,9 @@ module.exports = {
                 }
             }
         ]
-    }
+    },
+    plugins: [
+        new TerserPlugin() //minifies bundle.js
+        //** TerserPlugin is now recommended over uglify.js!!!
+    ]
 }
