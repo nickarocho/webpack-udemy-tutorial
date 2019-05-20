@@ -3,15 +3,23 @@ const CleanWebpackPlugin = require ('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
-    entry: './src/index.js', //Webpack entry point, usually imports all other dependencies
+    entry: {
+        'hello-world': './src/hello-world.js',
+        'food': './src/foodFlip.js'
+    }, //Webpack entry point, usually imports all other dependencies
     output: { //specify the name of the file which will be generated as result of WP build
-        filename: 'bundle.js', //what's the file called?
+        filename: '[name].bundle.js', //what's the file called?
         //[contenthash] is used as a cache-busting technique by adding MD5 hash to filename on code change
-        path: path.resolve(__dirname, './dist'), //where will the file live? (auto-created by WP)
+        path: path.resolve(__dirname, 'dist'), //where will the file live? (auto-created by WP)
         //WP needs 'path' as a helper to avoid this error: "configuration.output.path: The provided value "./dist" is not an absolute path!-> The output directory as **absolute path** (required)."
-        publicPath: './../' //this tells the browser where to start the path for things like img src
+        publicPath: '' //this tells the browser where to start the path for things like img src
     },
     mode: 'development', //mandatory option, can be: 'none', 'development', or 'production'
+    devServer: {
+        contentBase: path.resolve(__dirname, 'dist'),
+        index: 'index.html',
+        port: 5000
+    },
     module: { //teaching WP how to import different file types (knows JS "by heart", but not other types)
         rules: [
             {
@@ -25,7 +33,7 @@ module.exports = {
             {
                 test: /\.css$/,
                 use: [
-                    'style-loader'
+                    'style-loader', 'css-loader'
                 ]
             },
             {
@@ -57,12 +65,23 @@ module.exports = {
         new CleanWebpackPlugin(),
         new HtmlWebpackPlugin({ // auto genereates HTML with dynamic paths/hashes
             title: 'Hello world',
-            filename: 'subfolder/custom_filename.html',
+            filename: 'hello-world.html',
+            chunks: ['hello-world'],
             meta: {
                 viewport: 'width=device-width, initial-scale=1',
                 description: 'Some description dynamically loaded hereeeee....'
             },
-            template: 'src/index.hbs'
+            template: 'src/page-template.hbs'
+        }),
+        new HtmlWebpackPlugin({ // auto genereates HTML with dynamic paths/hashes
+            title: 'Food',
+            filename: 'food.html',
+            chunks: ['food'],
+            meta: {
+                viewport: 'width=device-width, initial-scale=1',
+                description: 'Food hereeeee....'
+            },
+            template: 'src/page-template.hbs'
         })
     ]
 }

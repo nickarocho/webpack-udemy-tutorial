@@ -4,13 +4,23 @@ const CleanWebpackPlugin = require ('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
-    entry: './src/index.js',
+    entry: {
+        'hello-world': './src/hello-world.js',
+        'food': './src/foodFlip.js'
+    },
     output: {
-        filename: 'bundle.[contenthash].js',
-        path: path.resolve(__dirname, './dist'),
-        publicPath: './../'
+        filename: '[name].[contenthash].js',
+        path: path.resolve(__dirname, 'dist'),
+        publicPath: ''
     },
     mode: 'production',
+    optimization: {
+        splitChunks: {
+            chunks: "all",
+            minSize: 10000,
+            automaticNameDelimiter: '_'
+        }
+    },
     module: {
         rules: [
             {
@@ -52,17 +62,28 @@ module.exports = {
     },
     plugins: [
         new MiniCssExtractPlugin({
-            filename: 'styles.[contenthash].css'
+            filename: '[name].[contenthash].css'
         }),
         new CleanWebpackPlugin(),
         new HtmlWebpackPlugin({
+            filename: 'hello-world.html',
             title: 'Hello world',
-            filename: 'subfolder/custom_filename.html',
+            chunks: ['hello-world', 'vendors~food~hello-world'],
             meta: {
                 viewport: 'width=device-width, initial-scale=1',
                 description: 'Some description dynamically loaded hereeeee....'
             },
-            template: 'src/index.hbs'
+            template: 'src/page-template.hbs'
+        }),
+        new HtmlWebpackPlugin({
+            filename: 'food.html',
+            title: 'Food',
+            chunks: ['food', 'vendors~food~hello-world'],
+            meta: {
+                viewport: 'width=device-width, initial-scale=1',
+                description: 'Food....'
+            },
+            template: 'src/page-template.hbs'
         })
     ]
 }
